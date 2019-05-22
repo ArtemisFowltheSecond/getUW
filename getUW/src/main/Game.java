@@ -15,8 +15,20 @@ public class Game extends Canvas implements Runnable{
 	private Thread thread;
 	private boolean running = false;
 	
+	private Handler handler;
+	
+	//Keeping track of game
+	private final int winning_score = 2048;
+	private final int[][] grid = new int[4][4];
+	//If 0, there is no tile in that spot. The number of the element matches the tile value in that spot.
+	private boolean game_over = false;
+	private boolean game_won = false;
+	
 	public Game() {
 		new Window(WIDTH, HEIGHT, "getUW!", this);
+		
+		handler = new Handler();
+		handler.addObject(createNewTile());
 	}
 
 	public synchronized void start() { 
@@ -34,6 +46,21 @@ public class Game extends Canvas implements Runnable{
 			e.printStackTrace();
 			// Run an error bug in our console.
 		}
+	}
+	
+	//Creates a new tile in a blank spot -- needs to include graphics as well
+	public Tile createNewTile() {
+		int random = (int)(Math.random()*16);
+		int row = random / (int) (Math.random() *4);
+		int column = random / (int) (Math.random() *4);
+		while (grid[row][column] != 0) {
+			createNewTile();
+		}
+		
+		Tile randomTile = new Tile(row, column);
+		grid[row][column] = randomTile.getTileValue();
+		
+		return randomTile;
 	}
 	
 	public void run() {
@@ -68,7 +95,7 @@ public class Game extends Canvas implements Runnable{
 	}
 	
 	private void tick() {
-		
+		handler.tick();
 	}
 	
 	private void render() {
@@ -82,6 +109,9 @@ public class Game extends Canvas implements Runnable{
 		
 		g.setColor(Color.gray);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
+		
+		handler.render(g);
+		
 		g.dispose();
 		bs.show();
 	}

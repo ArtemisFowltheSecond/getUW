@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 public class Tile {
@@ -8,7 +9,9 @@ public class Tile {
 	//Protected can only be accessed by which object inherits Tile and can be initialized here
 	protected int tile_value = 0;	
 	
-	public Tile() {
+	public Tile(int x, int y) {
+		this.x = x;
+		this.y = y;
 		int random = (int) (Math.random() * 2);
 		if (random == 0) {
 			//Tile 4
@@ -23,14 +26,14 @@ public class Tile {
 	}
 	
 	public void render(Graphics g) {
-		
+		g.setColor(Color.white);
+		g.fillRect(x, y, 32, 32);
 	}
 	
 	public int getTileValue() {
 		return tile_value;
 	}
 	
-	//Need these????
 	public void setX (int x) {
 		this.x = x;
 	}
@@ -47,7 +50,7 @@ public class Tile {
 		return y;
 	}
 	
-	
+	//Different tile values -- need to include graphics as well
 	public void drawTile2() {
 		tile_value = 2;
 	}
