@@ -7,6 +7,7 @@ import java.awt.image.BufferStrategy;
 
 public class Game extends Canvas implements Runnable{
 
+	//testing testing 123
 	private static final long serialVersionUID = 1L;
 	
 	public static final int WIDTH = 640;
