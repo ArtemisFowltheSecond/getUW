@@ -11,7 +11,7 @@ public class Game extends Canvas implements Runnable{
 	private static final long serialVersionUID = 1L;
 	
 	public static final int WIDTH = 640;
-	public static final int HEIGHT = WIDTH / 12 * 9;
+	public static final int HEIGHT = WIDTH;
 	private Thread thread;
 	private boolean running = false;
 	
@@ -24,11 +24,13 @@ public class Game extends Canvas implements Runnable{
 	private boolean game_over = false;
 	private boolean game_won = false;
 	
+	//Order of everything that happens once game opens
 	public Game() {
 		new Window(WIDTH, HEIGHT, "getUW!", this);
 		
 		handler = new Handler();
 		handler.addObject(createNewTile());
+		
 	}
 
 	public synchronized void start() { 
@@ -109,6 +111,9 @@ public class Game extends Canvas implements Runnable{
 		
 		g.setColor(Color.gray);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
+		
+		g.setColor(Color.white);
+		g.drawRect(320, 320, 520, 520);
 		
 		handler.render(g);
 		
