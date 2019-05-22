@@ -109,11 +109,24 @@ public class Game extends Canvas implements Runnable{
 		
 		Graphics g = bs.getDrawGraphics();
 		
+		//background color
 		g.setColor(Color.gray);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		
+		//grid
 		g.setColor(Color.white);
-		g.drawRect(320, 320, 520, 520);
+		g.fillRect(60, 60, 520, 520);
+		g.setColor(Color.gray);
+		g.drawRect(60, 60, 130, 520);
+		g.drawRect(60, 60, 260, 520);
+		g.drawRect(60, 60, 390, 520);
+		g.drawRect(60, 60, 520, 520);
+		g.drawRect(60, 60, 520, 130);
+		g.drawRect(60, 60, 520, 260);
+		g.drawRect(60, 60, 520, 390);
+		g.drawRect(60, 60, 520, 520);
+		
+		//Squares and tiles are 60 * 60 & start at 60-580 for position values.
 		
 		handler.render(g);
 		

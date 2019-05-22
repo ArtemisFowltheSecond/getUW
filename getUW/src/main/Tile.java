@@ -3,11 +3,15 @@ package main;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import pictureLab.Picture;
+
 public class Tile {
 	
 	protected int x, y;
 	//Protected can only be accessed by which object inherits Tile and can be initialized here
 	protected int tile_value = 0;	
+	
+	Graphics g;
 	
 	public Tile(int x, int y) {
 		this.x = x;
@@ -53,6 +57,8 @@ public class Tile {
 	//Different tile values -- need to include graphics as well
 	public void drawTile2() {
 		tile_value = 2;
+		Picture WSU = new Picture();
+		//Image tile2 = new ImageDisplay(Picture("WSU.png", x, y);
 	}
 	
 	public void drawTile4() {
