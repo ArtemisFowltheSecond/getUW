@@ -29,7 +29,9 @@ public class Game extends Canvas implements Runnable{
 		new Window(WIDTH, HEIGHT, "getUW!", this);
 		
 		handler = new Handler();
-		handler.addObject(createNewTile());
+		Tile newTile = createNewTile();
+		handler.addObject(newTile);
+		grid[newTile.getX()][newTile.getY()] = newTile.getTileValue();		
 		
 	}
 
