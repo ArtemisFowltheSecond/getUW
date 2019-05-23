@@ -19,7 +19,9 @@ public class Game extends Canvas implements Runnable{
 	
 	//Keeping track of game
 	private final int winning_score = 2048;
-	private final int[][] grid = new int[4][4];
+	private final int[][] grid =
+	{0,0,0,0
+	0,0,0,0}
 	//If 0, there is no tile in that spot. The number of the element matches the tile value in that spot.
 	private boolean game_over = false;
 	private boolean game_won = false;
@@ -28,11 +30,18 @@ public class Game extends Canvas implements Runnable{
 	public Game() {
 		new Window(WIDTH, HEIGHT, "getUW!", this);
 		
+		for(int i = 0; i < grid.length; i++) {
+			for (int j = 0; j < grid[0].length; i++) {
+				grid[i][j] = 0;
+			}
+		}
+		
 		handler = new Handler();
 		Tile newTile = createNewTile();
 		handler.addObject(newTile);
 		grid[newTile.getX()][newTile.getY()] = newTile.getTileValue();		
 		
+		render();
 	}
 
 	public synchronized void start() { 
