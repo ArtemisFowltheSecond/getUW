@@ -18,7 +18,6 @@ public class Tile {
 	protected int tile_value = 0;	
 	
 	Graphics g;
-	//Did git hub work???
 	
 	public Tile(int x, int y) {
 		this.x = x;

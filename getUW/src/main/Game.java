@@ -24,7 +24,7 @@ public class Game extends Canvas implements Runnable{
 	private boolean game_over = false;
 	private boolean game_won = false;
 	
-	//Order of everything that happens once game opens
+	//Order of everything that happens once game opens hopefully
 	public Game() {
 		new Window(WIDTH, HEIGHT, "getUW!", this);
 		

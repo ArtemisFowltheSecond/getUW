@@ -14,6 +14,8 @@ public class ImagePanel extends JPanel{
     private BufferedImage image;
     private int x;
     private int y;
+    
+    //this is useless
 
     public ImagePanel(String imagename, int x, int y) {
        this.x = x;
