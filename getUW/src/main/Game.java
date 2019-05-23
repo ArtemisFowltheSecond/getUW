@@ -19,9 +19,7 @@ public class Game extends Canvas implements Runnable{
 	
 	//Keeping track of game
 	private final int winning_score = 2048;
-	private final int[][] grid =
-	{0,0,0,0
-	0,0,0,0}
+	private final int[][] grid = { {0,0,0,0}, {0,0,0,0} };
 	//If 0, there is no tile in that spot. The number of the element matches the tile value in that spot.
 	private boolean game_over = false;
 	private boolean game_won = false;
