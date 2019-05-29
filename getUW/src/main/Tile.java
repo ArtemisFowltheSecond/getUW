@@ -14,20 +14,44 @@ import pictureLab.Picture;
 public class Tile {
 	
 	protected int x, y;
+	protected int originalx, originaly;
 	//Protected can only be accessed by which object inherits Tile and can be initialized here
 	protected int tile_value = 0;	
 	
 	Graphics g;
 	
 	public Tile(int x, int y) {
-		this.x = x;
-		this.y = y;
+		originalx = x;
+		originaly = y;
+		convertXandY();
 		int random = (int) (Math.random() * 2);
 		if (random == 0) {
 			//Tile 4
 			drawTile4();
 		} else {
 			drawTile2();
+		}
+	}
+	
+	public void convertXandY () {
+		if (x == 0) {
+			x = 130;
+		} else if (x == 1) {
+			x = 260;
+		} else if (x == 2) {
+			x = 390;
+		} else {
+			x = 520;
+		}
+		
+		if (y == 0) {
+			y = 130;
+		} else if (y == 1) {
+			y = 260;
+		} else if (y == 2) {
+			y = 390;
+		} else {
+			y = 520;
 		}
 	}
 	
@@ -53,24 +77,24 @@ public class Tile {
 	}
 	
 	public int getX() {
-		return x;
+		return originalx;
 	}
 	
 	public int getY() {
-		return y;
+		return originaly;
 	}
 	
 	//Different tile values -- need to include graphics as well
 	public void drawTile2() {
 		tile_value = 2;
 		//call image
-		ImagePanel tile2 = new ImagePanel("WSU Tile.png", x, y);
+		ImagePanel tile2 = new ImagePanel("src/icons/WSU Tile.png", x, y);
 		tile2.paintComponents(g);
 	}
 	
 	public void drawTile4() {
 		tile_value = 4;
-		ImagePanel tile4 = new ImagePanel("Evergreen Tile.png", x, y);
+		ImagePanel tile4 = new ImagePanel("src/icons/Evergreen Tile.png", x, y);
 		tile4.paintComponents(g);
 	}
 	
