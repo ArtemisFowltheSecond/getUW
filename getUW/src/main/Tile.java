@@ -1,11 +1,15 @@
 package main;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import pictureLab.ImageDisplay;
 import pictureLab.ImagePanel;
@@ -13,142 +17,96 @@ import pictureLab.Picture;
 
 public class Tile {
 	
-	protected int x, y;
-	protected int originalx, originaly;
-	//Protected can only be accessed by which object inherits Tile and can be initialized here
-	protected int tile_value = 0;	
+	public static final int WIDTH = 80;
+	public static final int HEIGHT = 80;
+	public static final int SLIDE_SPEED = 20;
+	public static final int ARC_WIDTH = 15;
+	public static final int ARC_HEIGHT = 15;
 	
-	Graphics g;
+	private int value;
+	private BufferedImage tileimage;
+	private Color background;
+	private Color text;
+	private Font font;
+	private int x;
+	private int y;
 	
-	public Tile(int x, int y) {
-		originalx = x;
-		originaly = y;
-		convertXandY();
-		int random = (int) (Math.random() * 2);
-		if (random == 0) {
-			//Tile 4
-			drawTile4();
-		} else {
-			drawTile2();
-		}
-	}
-	
-	public void convertXandY () {
-		if (x == 0) {
-			x = 130;
-		} else if (x == 1) {
-			x = 260;
-		} else if (x == 2) {
-			x = 390;
-		} else {
-			x = 520;
-		}
-		
-		if (y == 0) {
-			y = 130;
-		} else if (y == 1) {
-			y = 260;
-		} else if (y == 2) {
-			y = 390;
-		} else {
-			y = 520;
-		}
-	}
-	
-	public void tick() {
-		
-	}
-	
-	public void render(Graphics g) {
-		g.setColor(Color.white);
-		g.fillRect(x, y, 32, 32);
-	}
-	
-	public int getTileValue() {
-		return tile_value;
-	}
-	
-	public void setX (int x) {
+	public Tile(int value, int x, int y) {
+		this.value = value;
 		this.x = x;
-	}
-	
-	public void setY (int y) {
 		this.y = y;
+		tileimage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		drawImage();
 	}
 	
-	public int getX() {
-		return originalx;
-	}
-	
-	public int getY() {
-		return originaly;
-	}
-	
-	//Different tile values -- need to include graphics as well
-	public void drawTile2() {
-		tile_value = 2;
-		//call image
-		ImagePanel tile2 = new ImagePanel("src/icons/WSU Tile.png", x, y);
-		tile2.paintComponents(g);
-	}
-	
-	public void drawTile4() {
-		tile_value = 4;
-		ImagePanel tile4 = new ImagePanel("src/icons/Evergreen Tile.png", x, y);
-		tile4.paintComponents(g);
-	}
-	
-	public void drawTile8() {
-		tile_value = 8;
-		ImagePanel tile8 = new ImagePanel("Central Tile.png", x, y);
-		tile8.paintComponents(g);
-	}
-	
-	public void drawTile16() {
-		tile_value = 16;
-		ImagePanel tile16 = new ImagePanel("Western Tile.png", x, y);
-		tile16.paintComponents(g);
-	}
-	
-	public void drawTile32() {
-		tile_value = 32;
-		ImagePanel tile32 = new ImagePanel("Whitman Tile.png", x, y);
-		tile32.paintComponents(g);
-	}
-	
-	public void drawTile64() {
-		tile_value = 64;
-		ImagePanel tile64 = new ImagePanel("SPU Tile.png", x, y);
-		tile64.paintComponents(g);
-	}
-	
-	public void drawTile128() {
-		tile_value = 128;
-		ImagePanel tile128 = new ImagePanel("Eastern Tile.png", x, y);
-		tile128.paintComponents(g);
-	}
-	
-	public void drawTile256() {
-		tile_value = 256;
-		ImagePanel tile256 = new ImagePanel("Digipen Tile.png", x, y);
-		tile256.paintComponents(g);
-	}
-	
-	public void drawTile512() {
-		tile_value = 512;
-		ImagePanel tile512 = new ImagePanel("PLU Tile.png", x, y);
-		tile512.paintComponents(g);
-	}
-	
-	public void drawTile1024() {
-		tile_value = 1024;
-		ImagePanel tile1024 = new ImagePanel("Gonzaga Tile.png", x, y);
-		tile1024.paintComponents(g);
-	}
-	
-	public void drawTile2048() {
-		tile_value = 2048;
-		ImagePanel tile2048 = new ImagePanel("UW Tile.png", x, y);
-		tile2048.paintComponents(g);
+	public void drawImage() {
+		Graphics2D g = (Graphics2D)tileimage.getGraphics();
+		if(value == 2) {
+			background = new Color(234,17,14);
+			text = new Color(255,255,255);
+		} else if (value == 4) {
+			//display Evergreen tile
+			background = new Color(9,84, 1);
+			text = new Color(255,255,255);
+		} else if (value == 8) {
+			//display Central tile
+			background = new Color(234,17,14);
+			text = new Color(255,255,255);
+		} else if (value == 16) {
+			background = new Color(8,51,160);
+			text = new Color(255,255,255);
+		} else if (value == 32) {
+			//display Whitman tile
+			background = new Color(4, 16, 84);
+			text = new Color(247,239,150);
+		} else if (value == 64) {
+			//display SPU tile
+			background = new Color(79,3,3);
+			text = new Color(255,255,255);
+		} else if (value == 128) {
+			//display Eastern tile
+			background = new Color(234,17,14);
+			text = new Color(0,0,0);
+		} else if (value == 256) {
+			//display DigiPen tile
+			background = new Color(79,3,3);
+			text = new Color(0,0,0);
+		} else if (value == 512) {
+			//display PLU tile
+			background = new Color(0,0,0);
+			text = new Color(235,239,4);
+		} else if (value == 1024) {
+			//display Gonzaga tile
+			background = new Color(255,255,255);
+			text = new Color(4, 16, 84);
+		} else if (value == 2048) {
+			//display UW tile
+			background = new Color(66,2,135);
+			text = new Color(235,239,4);
+		} else {
+			background = new Color(0,0,0);
+			text = new Color(255,255,255);
+		}
+		
+		g.setColor(new Color(0,0,0));
+		g.fillRect(0, 0, WIDTH, HEIGHT);
+		
+		g.setColor(background);
+		g.fillRoundRect(0, 0, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+		
+		g.setColor(text);
+		
+		if (value <= 64) {
+			font = Game.main.deriveFont(36f);
+		} else {
+			font = Game.main;
+		}
+		
+		g.setFont(font);
+		
+		int drawX = WIDTH/2 - DrawUtils.getMessageWidth("" + value, font, g)/2;
+		int drawY = HEIGHT/2 + DrawUtils.getMessageHeight("" + value, font, g)/2;
+		g.drawString("" + value, drawX, drawY);
+		g.dispose();
 	}
 }

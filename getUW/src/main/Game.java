@@ -2,145 +2,193 @@ package main;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 
-public class Game extends Canvas implements Runnable{
+import javax.swing.JPanel;
+
+public class Game extends JPanel implements KeyListener, Runnable{
 
 	//testing testing 123
 	private static final long serialVersionUID = 1L;
 	
 	public static final int WIDTH = 640;
 	public static final int HEIGHT = WIDTH;
-	private Thread thread;
+	public static final Font main = new Font("Bebas Neue Regular", Font.PLAIN, 28);
+
+	private Thread game;
 	private boolean running = false;
+	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 	
-	private Handler handler;
-	
-	//Keeping track of game
-	private final int winning_score = 2048;
-	private final int[][] grid = new int[4][4];
-	//If 0, there is no tile in that spot. The number of the element matches the tile value in that spot.
-	private boolean game_over = false;
-	private boolean game_won = false;
+	private long startTime;
+	private long elapsed;
+	private boolean set;
+	private Gameboard board;
 	
 	//Order of everything that happens once game opens hopefully
 	public Game() {
 
-		handler = new Handler();
-		this.addKeyListener(new KeyInput(handler));
+		setFocusable(true);
+		setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		addKeyListener(this);
 		
-		new Window(WIDTH, HEIGHT, "getUW!", this);
-
-		Tile newTile = createNewTile();
-		handler.addObject(newTile);
-		grid[newTile.getX()][newTile.getY()] = newTile.getTileValue();		
-		
-		render();
+		board= new Gameboard(WIDTH/2-Gameboard.BOARD_WIDTH/2, HEIGHT - Gameboard.BOARD_HEIGHT-10);
+	}
+	
+	public void update() {
+		board.update();
+		Keyboard.update();
 	}
 
 	public synchronized void start() { 
-		thread = new Thread(this);
-		thread.start();
+		if(running) return;
 		running = true;
+		game = new Thread(this, "game");
+		game.start();
 	}
 	
 	public synchronized void stop() { 
-		try {
-			thread.join();
-			//Stops thread all together
-			running = false;
-		} catch (Exception e) {
-			e.printStackTrace();
-			// Run an error bug in our console.
-		}
+		if(!running) return;
+		running = false;
+		System.exit(0);
 	}
 	
 	//Creates a new tile in a blank spot -- needs to include graphics as well
-	public Tile createNewTile() {
-		int row = (int) (Math.random() *3);
-		int column = (int) (Math.random() *3);
-		while (grid[row][column] != 0) {
-			createNewTile();
-		}
-				
-		Tile randomTile = new Tile(row, column);
-		grid[row][column] = randomTile.getTileValue();
-		
-		return randomTile;
-	}
+//	public Tile createNewTile() {
+//		int row = (int) (Math.random() *3);
+//		int column = (int) (Math.random() *3);
+//		while (grid[row][column] != 0) {
+//			createNewTile();
+//		}
+//				
+//		Tile randomTile = new Tile(row, column);
+//		grid[row][column] = randomTile.getTileValue();
+//		
+//		return randomTile;
+//	}
 	
 	public void run() {
-		//Game loop
-		long lastTime = System.nanoTime();
-		double amountOfTicks = 60.0;
-		double ns = 1000000000 / amountOfTicks;
-		double delta = 0;
-		long timer = System.currentTimeMillis();
-		int frames = 0;
-		while (running) {
-			long now = System.nanoTime();
-			delta += (now - lastTime) / ns;
-			lastTime = now;
-			while(delta >= 1) {
-				tick();
-				delta --;
-			}
-			if (running) {
-				render();
-			}
-			
-			frames++;
-			
-			if (System.currentTimeMillis() - timer > 1000) {
-				timer += 1000;
-				System.out.println("FPS: " + frames);
-				frames = 0;
+		//Game loop got off online game building tutorial
+		int fps = 0;
+		int update = 0;
+		long fpsTimer = System.currentTimeMillis();
+		double nsPerUpdate = 10000000000.0/60;
+		
+		//last update time
+		double then = System.nanoTime();
+		double unprocessed = 0;
+		
+		while(running) {
+			boolean shouldRender = false;
+			double now = System.nanoTime();
+			unprocessed += (now-then) / nsPerUpdate;
+			then = now;
+		
+		//update queue
+		while(unprocessed >= 1) {
+			update++;
+			update();
+			shouldRender = true;
+		}
+		
+		//render
+		if(shouldRender) {
+			fps++;
+			render();
+			shouldRender = false;
+		} else {
+			try {
+				Thread.sleep(1);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-		stop();
-	}
-	
-	private void tick() {
-		handler.tick();
+		
+		//FPS timer
+		
+		if(System.currentTimeMillis() - fpsTimer > 1000) {
+			System.out.printf("%d fps %d update", fps, update);
+			System.out.println();
+			fps = 0;
+			update = 0;
+			fpsTimer += 1000;
+		}
+		
+		}
 	}
 	
 	private void render() {
-		BufferStrategy bs = this.getBufferStrategy();
-		if (bs == null) {
-			this.createBufferStrategy(3);
-			return;
-		}
-		
-		Graphics g = bs.getDrawGraphics();
-		
-		//background color
-		g.setColor(Color.gray);
-		g.fillRect(0, 0, WIDTH, HEIGHT);
-		
-		//grid
+		Graphics2D g = (Graphics2D) image.getGraphics();
 		g.setColor(Color.white);
-		g.fillRect(60, 60, 520, 520);
-		g.setColor(Color.gray);
-		g.drawRect(60, 60, 130, 520);
-		g.drawRect(60, 60, 260, 520);
-		g.drawRect(60, 60, 390, 520);
-		g.drawRect(60, 60, 520, 520);
-		g.drawRect(60, 60, 520, 130);
-		g.drawRect(60, 60, 520, 260);
-		g.drawRect(60, 60, 520, 390);
-		g.drawRect(60, 60, 520, 520);
-		
-		//Squares and tiles are 60 * 60 & start at 60-580 for position values.
-		
-		handler.render(g);
-		
+		g.fillRect(0, 0, WIDTH, HEIGHT);
+		//render board
+		board.render(g);
 		g.dispose();
-		bs.show();
+		
+		Graphics2D g2d = (Graphics2D) getGraphics();
+		g2d.drawImage(image, 0, 0, null);
+		g2d.dispose();
+		
+//		BufferStrategy bs = this.getBufferStrategy();
+//		if (bs == null) {
+//			this.createBufferStrategy(3);
+//			return;
+//		}
+//		
+//		Graphics g = bs.getDrawGraphics();
+//		
+//		//background color
+//		g.setColor(Color.gray);
+//		g.fillRect(0, 0, WIDTH, HEIGHT);
+//		
+//		//grid
+//		g.setColor(Color.white);
+//		g.fillRect(60, 60, 520, 520);
+//		g.setColor(Color.gray);
+//		g.drawRect(60, 60, 130, 520);
+//		g.drawRect(60, 60, 260, 520);
+//		g.drawRect(60, 60, 390, 520);
+//		g.drawRect(60, 60, 520, 520);
+//		g.drawRect(60, 60, 520, 130);
+//		g.drawRect(60, 60, 520, 260);
+//		g.drawRect(60, 60, 520, 390);
+//		g.drawRect(60, 60, 520, 520);
+//		
+//		//Squares and tiles are 60 * 60 & start at 60-580 for position values.
+//		
+//		handler.render(g);
+//		
+//		g.dispose();
+//		bs.show();
 	}
 	
 	public static void main(String args[]) {
 		new Game();
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		Keyboard.keyPressed(e);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		Keyboard.keyReleased(e);
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
